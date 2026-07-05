@@ -92,13 +92,13 @@ export default function QuizDemo({ t, lang }) {
 
         <div className="demo-shell">
           {step === -1 && (
-            <div className="intro-cta">
+            <div className="intro-cta quiz-step" key="intro">
               <button className="btn primary" onClick={() => setStep(0)}>{q.start} →</button>
             </div>
           )}
 
           {step >= 0 && step <= 4 && (
-            <div>
+            <div className="quiz-step" key={step}>
               <div className="quiz-progress" aria-hidden="true">
                 {q.questions.map((_, i) => (
                   <span key={i} className={i <= step ? 'done' : ''} />
@@ -130,13 +130,13 @@ export default function QuizDemo({ t, lang }) {
           )}
 
           {step === 5 && (
-            <div className="quiz-loading" role="status">
+            <div className="quiz-loading quiz-step" role="status">
               <span className="spinner" aria-hidden="true" /> {q.loading}
             </div>
           )}
 
           {step === 6 && result && (
-            <div>
+            <div className="quiz-step">
               <span className={`badge ${result.live ? 'live' : 'demo'}`}>
                 <span className="dot" /> {result.live ? q.liveBadge : result.errored ? q.error : q.fallbackBadge}
               </span>

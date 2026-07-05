@@ -163,6 +163,15 @@ button { font-family: inherit; cursor: pointer; }
 }
 #demo1 .intro-cta { display: flex; justify-content: center; }
 
+.quiz-step { animation: quiz-step-in 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes quiz-step-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quiz-step { animation: none; }
+}
+
 /* ── Quiz ─────────────────────────────── */
 .quiz-progress { display: flex; gap: 7px; margin: 6px 0 26px; }
 .quiz-progress span { width: 34px; height: 3px; border-radius: 2px; background: var(--line); transition: background 0.25s; }
