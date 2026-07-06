@@ -1,4 +1,4 @@
-import{r as ta,j as ko}from"./index-CY-HfE7i.js";/**
+import{r as ta,j as ko}from"./index-BdP2ICfz.js";/**
  * @license
  * Copyright 2010-2024 Three.js Authors
  * SPDX-License-Identifier: MIT

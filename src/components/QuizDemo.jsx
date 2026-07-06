@@ -9,14 +9,16 @@ function ProductCard({ slug, lang, added, onAdd, addLabel, addedLabel }) {
       <div className="product-img">
         <img src={p.img} alt={p[lang]} loading="lazy" />
       </div>
-      <p className="product-title">{p[lang]}</p>
-      <button
-        className={`cta${added ? ' added' : ''}`}
-        onClick={() => onAdd(slug)}
-        disabled={added}
-      >
-        {added ? addedLabel : addLabel}
-      </button>
+      <div className="product-body">
+        <p className="product-title">{p[lang]}</p>
+        <button
+          className={`cta${added ? ' added' : ''}`}
+          onClick={() => onAdd(slug)}
+          disabled={added}
+        >
+          {added ? addedLabel : addLabel}
+        </button>
+      </div>
     </div>
   )
 }
@@ -180,22 +182,24 @@ export default function QuizDemo({ t, lang }) {
               <div className="result-grid">
                 <div className="result-block">
                   <h4>{q.categories}</h4>
-                  {type[lang].categories.map((c) => (
-                    <div className="rec-item" key={c.cat}>
-                      <div className="cat-item">
-                        <b>{c.cat}</b>
-                        <span>{c.ex}</span>
+                  <div className="rec-grid">
+                    {type[lang].categories.map((c) => (
+                      <div className="rec-item" key={c.cat}>
+                        <div className="cat-item">
+                          <b>{c.cat}</b>
+                          <span>{c.ex}</span>
+                        </div>
+                        <ProductCard
+                          slug={c.product}
+                          lang={lang}
+                          added={cart.includes(c.product)}
+                          onAdd={addToCart}
+                          addLabel={q.addToCart}
+                          addedLabel={q.added}
+                        />
                       </div>
-                      <ProductCard
-                        slug={c.product}
-                        lang={lang}
-                        added={cart.includes(c.product)}
-                        onAdd={addToCart}
-                        addLabel={q.addToCart}
-                        addedLabel={q.added}
-                      />
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
                 <div className="result-block">
                   <h4>{q.routine}</h4>
