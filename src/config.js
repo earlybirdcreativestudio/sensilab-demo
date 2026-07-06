@@ -15,18 +15,59 @@ export const CONTACT = {
   call: 'https://calendly.com/your-handle/15min',
 }
 
-// 3. Chronotype definitions: names, energy curves, category → Sensilab line
-//    mapping (hardcoded on purpose — the AI never picks products), and the
-//    pre-baked fallback copy used when WEBHOOK_URL is empty or the call fails.
+// 3. Product registry (hardcoded on purpose — the AI never picks products).
+//    Each category below references one product by slug. Images live in /public.
+//    Titles are the official Sensilab product names, used as-is for both SL and EN.
+export const PRODUCTS = {
+  'mag-malate': {
+    img: '/101383_sensilab_essentials_magnesium_malate_1x-700.webp',
+    sl: 'Essentials Magnezijev malat 500, visok odmerek – vegansko, 120 kapsul',
+    en: 'Essentials Magnezijev malat 500, visok odmerek – vegansko, 120 kapsul',
+  },
+  'beyond-brain': {
+    img: '/100100_sensilab_beyond_brain_1x-700_1.webp',
+    sl: 'Beyond Brain: Maksimalna osredotočenost, spomin in koncentracija',
+    en: 'Beyond Brain: Maksimalna osredotočenost, spomin in koncentracija',
+  },
+  ashwagandha: {
+    img: '/xxxxxx_sensilab_essentials_ashwagandha_1x-700_1.webp',
+    sl: 'Essentials Ašvaganda KSM-66 120 kapsul',
+    en: 'Essentials Ašvaganda KSM-66 120 kapsul',
+  },
+  adrenalux: {
+    img: '/901807_902200_glandline-adrenalux-2x-700_2_1.webp',
+    sl: 'AdrenaLux - naravna podpora v obdobljih stresa',
+    en: 'AdrenaLux - naravna podpora v obdobljih stresa',
+  },
+  'mag-complex': {
+    img: '/xxxxxx_sensilab_essentials_magnesium_complex_500_1x-300.webp',
+    sl: 'Kapsule magnezijevega kompleksa 500',
+    en: 'Kapsule magnezijevega kompleksa 500',
+  },
+  sleeplux: {
+    img: '/xxxxxx_glandline_sleeplux_forte_1x-700.webp',
+    sl: 'Sensilab Glandline SleepLux',
+    en: 'Sensilab Glandline SleepLux',
+  },
+  'mag-glycinate': {
+    img: '/xxxxxx_sensilab_essentials_magnesium_glycinate_2x-700_3.webp',
+    sl: 'Essentials Magnezijev glicinat 750, visok odmerek',
+    en: 'Essentials Magnezijev glicinat 750, visok odmerek',
+  },
+}
+
+// 4. Chronotype definitions: names, energy curves, category → product mapping
+//    (hardcoded on purpose — the AI never picks products), and the pre-baked
+//    fallback copy used when WEBHOOK_URL is empty or the call fails.
 export const CHRONOTYPES = {
   morning: {
     curve: [3, 9, 10, 8, 6, 4, 3, 2], // energy 0-10 at 6h,9h,12h,15h,18h,21h,24h,3h
     sl: {
       name: 'Jutranji tip',
       categories: [
-        { cat: 'Vzdržljiva energija', ex: 'npr. magnezijev malat, B-kompleks' },
-        { cat: 'Popoldanski fokus', ex: 'npr. L-teanin, Beyond Brain linija' },
-        { cat: 'Obvladovanje stresa', ex: 'npr. ašvaganda KSM-66' },
+        { cat: 'Vzdržljiva energija', ex: 'npr. magnezijev malat, B-kompleks', product: 'mag-malate' },
+        { cat: 'Popoldanski fokus', ex: 'npr. L-teanin, Beyond Brain linija', product: 'beyond-brain' },
+        { cat: 'Obvladovanje stresa', ex: 'npr. ašvaganda KSM-66', product: 'ashwagandha' },
       ],
       description:
         'Vaša energija doseže vrh dopoldne in začne popuščati sredi popoldneva. Jutranji tipi najbolje delujejo, ko zahtevne naloge opravijo zgodaj, popoldne pa energijo zavestno podpirajo, namesto da jo lovijo s kavo.',
@@ -40,9 +81,9 @@ export const CHRONOTYPES = {
     en: {
       name: 'Morning type',
       categories: [
-        { cat: 'Sustained energy', ex: 'e.g. magnesium malate, B-complex' },
-        { cat: 'Afternoon focus', ex: 'e.g. L-theanine, Beyond Brain line' },
-        { cat: 'Stress management', ex: 'e.g. ashwagandha KSM-66' },
+        { cat: 'Sustained energy', ex: 'e.g. magnesium malate, B-complex', product: 'mag-malate' },
+        { cat: 'Afternoon focus', ex: 'e.g. L-theanine, Beyond Brain line', product: 'beyond-brain' },
+        { cat: 'Stress management', ex: 'e.g. ashwagandha KSM-66', product: 'ashwagandha' },
       ],
       description:
         'Your energy peaks before noon and starts fading mid-afternoon. Morning types perform best when demanding work happens early and the afternoon is consciously supported rather than chased with coffee.',
@@ -59,9 +100,9 @@ export const CHRONOTYPES = {
     sl: {
       name: 'Vmesni tip',
       categories: [
-        { cat: 'Stres in sprostitev', ex: 'npr. magnezijev glicinat, AdrenaLux' },
-        { cat: 'Stabilna energija', ex: 'npr. magnezijev kompleks, elektroliti' },
-        { cat: 'Kakovost spanca', ex: 'npr. linija SleepLux' },
+        { cat: 'Stres in sprostitev', ex: 'npr. magnezijev glicinat, AdrenaLux', product: 'adrenalux' },
+        { cat: 'Stabilna energija', ex: 'npr. magnezijev kompleks, elektroliti', product: 'mag-complex' },
+        { cat: 'Kakovost spanca', ex: 'npr. linija SleepLux', product: 'sleeplux' },
       ],
       description:
         'Vaš ritem je prilagodljiv — energija je razmeroma stabilna, a prav zato nanjo najbolj vplivata stres in nereden urnik. Vmesni tipi največ pridobijo z doslednostjo, ne z optimizacijo posameznih ur.',
@@ -75,9 +116,9 @@ export const CHRONOTYPES = {
     en: {
       name: 'Intermediate type',
       categories: [
-        { cat: 'Stress & relaxation', ex: 'e.g. magnesium glycinate, AdrenaLux' },
-        { cat: 'Stable energy', ex: 'e.g. magnesium complex, electrolytes' },
-        { cat: 'Sleep quality', ex: 'e.g. the SleepLux line' },
+        { cat: 'Stress & relaxation', ex: 'e.g. magnesium glycinate, AdrenaLux', product: 'adrenalux' },
+        { cat: 'Stable energy', ex: 'e.g. magnesium complex, electrolytes', product: 'mag-complex' },
+        { cat: 'Sleep quality', ex: 'e.g. the SleepLux line', product: 'sleeplux' },
       ],
       description:
         'Your rhythm is flexible — energy is relatively stable, which is exactly why stress and an irregular schedule affect it most. Intermediate types gain the most from consistency, not from optimizing individual hours.',
@@ -94,9 +135,9 @@ export const CHRONOTYPES = {
     sl: {
       name: 'Večerni tip',
       categories: [
-        { cat: 'Podpora spancu', ex: 'npr. linija SleepLux, baldrijan' },
-        { cat: 'Jutranja energija', ex: 'npr. magnezijev malat, B-kompleks' },
-        { cat: 'Umirjanje zvečer', ex: 'npr. GABA, magnezijev glicinat' },
+        { cat: 'Podpora spancu', ex: 'npr. linija SleepLux, baldrijan', product: 'sleeplux' },
+        { cat: 'Jutranja energija', ex: 'npr. magnezijev malat, B-kompleks', product: 'mag-malate' },
+        { cat: 'Umirjanje zvečer', ex: 'npr. GABA, magnezijev glicinat', product: 'mag-glycinate' },
       ],
       description:
         'Vaša energija se prebudi pozno in doseže vrh zvečer — jutra so za vas najtežji del dneva. Večerni tipi ne potrebujejo več discipline, ampak pametnejši večerni ritual in mehkejši prehod v jutro.',
@@ -110,9 +151,9 @@ export const CHRONOTYPES = {
     en: {
       name: 'Evening type',
       categories: [
-        { cat: 'Sleep support', ex: 'e.g. the SleepLux line, valerian' },
-        { cat: 'Morning energy', ex: 'e.g. magnesium malate, B-complex' },
-        { cat: 'Evening wind-down', ex: 'e.g. GABA, magnesium glycinate' },
+        { cat: 'Sleep support', ex: 'e.g. the SleepLux line, valerian', product: 'sleeplux' },
+        { cat: 'Morning energy', ex: 'e.g. magnesium malate, B-complex', product: 'mag-malate' },
+        { cat: 'Evening wind-down', ex: 'e.g. GABA, magnesium glycinate', product: 'mag-glycinate' },
       ],
       description:
         'Your energy wakes up late and peaks in the evening — mornings are the hardest part of your day. Evening types don\'t need more discipline; they need a smarter evening ritual and a softer transition into the morning.',

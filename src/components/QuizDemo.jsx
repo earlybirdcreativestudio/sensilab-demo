@@ -1,5 +1,25 @@
 import { useState } from 'react'
-import { WEBHOOK_URL, CHRONOTYPES, scoreChronotype } from '../config'
+import { WEBHOOK_URL, CHRONOTYPES, PRODUCTS, scoreChronotype } from '../config'
+
+function ProductCard({ slug, lang, added, onAdd, addLabel, addedLabel }) {
+  const p = PRODUCTS[slug]
+  if (!p) return null
+  return (
+    <div className="product-card">
+      <div className="product-img">
+        <img src={p.img} alt={p[lang]} loading="lazy" />
+      </div>
+      <p className="product-title">{p[lang]}</p>
+      <button
+        className={`cta${added ? ' added' : ''}`}
+        onClick={() => onAdd(slug)}
+        disabled={added}
+      >
+        {added ? addedLabel : addLabel}
+      </button>
+    </div>
+  )
+}
 
 function EnergyCurve({ curve, label }) {
   const w = 560
@@ -32,6 +52,9 @@ export default function QuizDemo({ t, lang }) {
   const [step, setStep] = useState(-1) // -1 intro, 0-4 questions, 5 loading, 6 result
   const [answers, setAnswers] = useState([null, null, null, null, null])
   const [result, setResult] = useState(null) // { typeKey, description, routine, live }
+  const [cart, setCart] = useState([]) // slugs added to the simulated cart
+
+  const addToCart = (slug) => setCart((c) => (c.includes(slug) ? c : [...c, slug]))
 
   const pick = (i) => {
     const next = [...answers]
@@ -78,6 +101,7 @@ export default function QuizDemo({ t, lang }) {
   const reset = () => {
     setAnswers([null, null, null, null, null])
     setResult(null)
+    setCart([])
     setStep(-1)
   }
 
@@ -137,9 +161,16 @@ export default function QuizDemo({ t, lang }) {
 
           {step === 6 && result && (
             <div className="quiz-step">
-              <span className={`badge ${result.live ? 'live' : 'demo'}`}>
-                <span className="dot" /> {result.live ? q.liveBadge : result.errored ? q.error : q.fallbackBadge}
-              </span>
+              <div className="result-head">
+                <span className={`badge ${result.live ? 'live' : 'demo'}`}>
+                  <span className="dot" /> {result.live ? q.liveBadge : result.errored ? q.error : q.fallbackBadge}
+                </span>
+                {cart.length > 0 && (
+                  <span className="cart-pill" role="status" aria-label={`${q.cartLabel}: ${cart.length}`}>
+                    🛒 {cart.length}
+                  </span>
+                )}
+              </div>
               <p className="result-label" style={{ marginTop: 20 }}>{q.resultTitle}</p>
               <p className="result-name">{type[lang].name}</p>
               <p className="result-desc">{result.description}</p>
@@ -150,9 +181,19 @@ export default function QuizDemo({ t, lang }) {
                 <div className="result-block">
                   <h4>{q.categories}</h4>
                   {type[lang].categories.map((c) => (
-                    <div className="cat-item" key={c.cat}>
-                      <b>{c.cat}</b>
-                      <span>{c.ex}</span>
+                    <div className="rec-item" key={c.cat}>
+                      <div className="cat-item">
+                        <b>{c.cat}</b>
+                        <span>{c.ex}</span>
+                      </div>
+                      <ProductCard
+                        slug={c.product}
+                        lang={lang}
+                        added={cart.includes(c.product)}
+                        onAdd={addToCart}
+                        addLabel={q.addToCart}
+                        addedLabel={q.added}
+                      />
                     </div>
                   ))}
                 </div>

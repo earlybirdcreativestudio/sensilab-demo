@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 function stageFor(day) {
   if (day >= 40) return 's40'
@@ -7,15 +7,17 @@ function stageFor(day) {
   return 's0'
 }
 
-// which workflow node index is active per stage
-const NODE_FOR = { s0: 0, s25: 2, s30: 3, s40: 4 }
-// forecast node (1) is "already passed" once day >= 20
-function nodeState(i, day, stage) {
-  const active = NODE_FOR[stage]
-  if (i === active) return 'on'
-  if (i < active || (i === 1 && day >= 20)) return 'passed'
-  return ''
-}
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v))
+
+// Milestones shown on the plain timeline. `node` indexes into r.nodes for the
+// label; the forecast node (1) is intentionally left off to reduce clutter.
+const MARKERS = [
+  { day: 0, node: 0, stage: 's0' },
+  { day: 25, node: 2, stage: 's25' },
+  { day: 30, node: 3, stage: 's30' },
+  { day: 40, node: 4, stage: 's40' },
+]
+const MAX_DAY = 45
 
 function Email({ email, withImage }) {
   return (
@@ -34,11 +36,83 @@ function Email({ email, withImage }) {
   )
 }
 
+function StageBody({ r, stage }) {
+  const s = r.stages[stage]
+  return (
+    <div className="stage2" key={stage}>
+      <span className="stage-tag">{s.tag}</span>
+      <p className="stage-text">{s.text}</p>
+      {s.email ? (
+        <Email email={s.email} withImage={stage === 's40'} />
+      ) : (
+        <div className="stage-quiet">— {stage === 's30' ? '…' : 'n8n'} —</div>
+      )}
+    </div>
+  )
+}
+
+// Big day counter + plain filling timeline with milestone markers.
+function Timeline({ r, day, stage }) {
+  return (
+    <>
+      <div className="day-counter">
+        <span className="day-num">{day}</span>
+        <span className="day-unit">{r.sliderLabel}</span>
+      </div>
+      <div className="tl" style={{ '--fill': `${(day / MAX_DAY) * 100}%` }}>
+        <div className="tl-track" />
+        <div className="tl-fill" />
+        {MARKERS.map((m) => (
+          <div
+            key={m.node}
+            className={`tl-marker ${stage === m.stage ? 'on' : ''} ${day >= m.day ? 'reached' : ''}`}
+            style={{ left: `${(m.day / MAX_DAY) * 100}%` }}
+          >
+            <span className="tl-dot" />
+            <span className="tl-label">{r.nodes[m.node]}</span>
+          </div>
+        ))}
+      </div>
+    </>
+  )
+}
+
 export default function RetentionDemo({ t }) {
   const r = t.retention
   const [day, setDay] = useState(0)
+  const [reduced, setReduced] = useState(false)
+  const wrapRef = useRef(null)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (mq.matches) {
+      setReduced(true)
+      return
+    }
+
+    const el = wrapRef.current
+    let raf = 0
+    const onScroll = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = 0
+        if (!el) return
+        const rect = el.getBoundingClientRect()
+        const scrollable = rect.height - window.innerHeight
+        const p = scrollable > 0 ? clamp(-rect.top / scrollable, 0, 1) : 0
+        setDay(Math.round(p * MAX_DAY))
+      })
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [])
+
   const stage = stageFor(day)
-  const s = r.stages[stage]
 
   return (
     <section className="section alt" id="demo2">
@@ -47,59 +121,26 @@ export default function RetentionDemo({ t }) {
         <h2>{r.title}</h2>
         <p className="lead">{r.lead}</p>
 
-        <div className="demo-shell">
-          <div className="timeline-wrap">
-            <div className="timeline-label">
-              <span className="day">
-                {day} <small>{r.sliderLabel}</small>
-              </span>
-            </div>
-            <input
-              type="range"
-              className="timeline"
-              min="0"
-              max="45"
-              value={day}
-              style={{ '--fill': `${(day / 45) * 100}%` }}
-              onChange={(e) => setDay(Number(e.target.value))}
-              aria-label={r.sliderLabel}
-            />
-            <div className="timeline-marks">
-              <span>0</span><span>10</span><span>20</span><span>30</span><span>40</span><span>45</span>
+        {reduced ? (
+          // Static, fully-visible fallback — no pinning, no scroll-jacking.
+          <div className="demo-shell demo2-static">
+            {MARKERS.map((m) => (
+              <StageBody r={r} stage={m.stage} key={m.stage} />
+            ))}
+            <p className="framing">{r.framing}</p>
+          </div>
+        ) : (
+          <div className="demo2-scroll" ref={wrapRef}>
+            <div className="demo2-sticky">
+              <div className="demo-shell">
+                <div className="wf-caption">{r.workflowLabel}</div>
+                <Timeline r={r} day={day} stage={stage} />
+                <StageBody r={r} stage={stage} />
+                <p className="framing">{r.framing}</p>
+              </div>
             </div>
           </div>
-
-          <div className="wf">
-            <div className="wf-label">{r.workflowLabel}</div>
-            <div className="wf-nodes">
-              {r.nodes.map((n, i) => (
-                <span key={n} style={{ display: 'contents' }}>
-                  {i > 0 && <span className={`wf-link ${nodeState(i, day, stage) ? 'on' : ''}`} aria-hidden="true" />}
-                  <span className={`wf-node ${nodeState(i, day, stage) === 'on' ? 'on' : ''}`}>
-                    <small>n8n · {String(i + 1).padStart(2, '0')}</small>
-                    {n}
-                  </span>
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="stage">
-            <div>
-              <span className="stage-tag">{s.tag}</span>
-              <p className="stage-text">{s.text}</p>
-            </div>
-            <div>
-              {s.email ? (
-                <Email email={s.email} withImage={stage === 's40'} key={stage} />
-              ) : (
-                <div className="stage-quiet">— {stage === 's30' ? '…' : 'n8n'} —</div>
-              )}
-            </div>
-          </div>
-
-          <p className="framing">{r.framing}</p>
-        </div>
+        )}
       </div>
     </section>
   )

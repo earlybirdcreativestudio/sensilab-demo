@@ -111,10 +111,8 @@ function About({ t }) {
             <h3>{a.cta}</h3>
             <p>{a.ctaBody}</p>
             <div className="cta-links">
-              <a href={CONTACT.email}>{a.email}</a>
               <a href={CONTACT.linkedin} target="_blank" rel="noreferrer">{a.linkedin}</a>
               <a href={CONTACT.cv} download>{a.cv}</a>
-              <a href={CONTACT.call} target="_blank" rel="noreferrer">{a.call}</a>
             </div>
           </div>
         </div>
@@ -137,7 +135,7 @@ export default function App() {
       <Skills t={t} />
       <About t={t} />
       <footer className="footer">
-        <p>{t.footer} © {new Date().getFullYear()} {CONTACT.name}</p>
+        <p>{t.footer}</p>
       </footer>
     </>
   )
