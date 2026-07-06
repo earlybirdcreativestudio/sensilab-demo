@@ -13,7 +13,6 @@ function Nav({ t, lang, setLang }) {
         <div className="nav-links">
           <a href="#demo1">{t.nav.d1}</a>
           <a href="#demo2">{t.nav.d2}</a>
-          <a href="#ozadje">{t.nav.bg}</a>
           <a href="#kontakt">{t.nav.contact}</a>
           <div className="lang-toggle keep" role="group" aria-label="Language">
             <button className={lang === 'sl' ? 'on' : ''} onClick={() => setLang('sl')}>SL</button>
@@ -30,43 +29,6 @@ function Bridge({ t }) {
     <section className="section bridge">
       <div className="section-inner">
         {t.bridge.body.map((p, i) => <p key={i}>{p}</p>)}
-      </div>
-    </section>
-  )
-}
-
-function Background({ t }) {
-  const b = t.bg
-  return (
-    <section className="section" id="ozadje">
-      <div className="section-inner">
-        <span className="eyebrow">{b.eyebrow}</span>
-        <h2>{b.title}</h2>
-        <div className="bg-grid">
-          <div className="bg-card">
-            <h3>{b.card1Title}</h3>
-            <p>{b.card1}</p>
-            <div className="arch-strip">
-              {b.arch.map((step, i) => (
-                <span key={step} style={{ display: 'contents' }}>
-                  {i > 0 && <i>→</i>}
-                  <span>{step}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="bg-card">
-            <h3>{b.card2Title}</h3>
-            <p>{b.card2}</p>
-            <div className="thumbs">
-              <div className="thumb">landing 01</div>
-              <div className="thumb">landing 02</div>
-              <div className="thumb">landing 03</div>
-            </div>
-            <p className="testimonial">{b.testimonial}</p>
-          </div>
-        </div>
-        <p className="connect-line">{b.connect}</p>
       </div>
     </section>
   )
@@ -135,7 +97,6 @@ export default function App() {
       <Bridge t={t} />
       <QuizDemo t={t} lang={lang} />
       <RetentionDemo t={t} />
-      <Background t={t} />
       <Skills t={t} />
       <About t={t} />
       <footer className="footer">
