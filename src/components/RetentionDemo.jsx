@@ -28,7 +28,11 @@ function Email({ email, withImage }) {
       </div>
       <div className="email-body">
         {email.body}
-        {withImage && <div className="email-img">{email.imgNote}</div>}
+        {withImage && (
+          <div className="email-img">
+            <img src="/email.webp" alt={email.imgNote} loading="lazy" />
+          </div>
+        )}
         <br />
         <span className="email-cta">{email.cta} →</span>
       </div>

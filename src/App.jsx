@@ -29,7 +29,7 @@ function Bridge({ t }) {
   return (
     <section className="section bridge">
       <div className="section-inner">
-        <p>{t.bridge.body}</p>
+        {t.bridge.body.map((p, i) => <p key={i}>{p}</p>)}
       </div>
     </section>
   )
@@ -107,13 +107,17 @@ function About({ t }) {
             <h2>{a.title}</h2>
             <p className="lead">{a.body}</p>
           </div>
-          <div className="cta-card">
+          <img className="about-photo" src="/Tien.webp" alt={a.title} />
+        </div>
+        <div className="cta-card cta-card--wide">
+          <div className="cta-card-text">
             <h3>{a.cta}</h3>
             <p>{a.ctaBody}</p>
-            <div className="cta-links">
-              <a href={CONTACT.linkedin} target="_blank" rel="noreferrer">{a.linkedin}</a>
-              <a href={CONTACT.cv} download>{a.cv}</a>
-            </div>
+          </div>
+          <div className="cta-links">
+            <a href={CONTACT.linkedin} target="_blank" rel="noreferrer">{a.linkedin}</a>
+            <a href={CONTACT.cv} download>{a.cv}</a>
+            <a href="mailto:tiensuhorepec@gmail.com">Email: tiensuhorepec@gmail.com</a>
           </div>
         </div>
       </div>
