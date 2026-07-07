@@ -78,7 +78,7 @@ function About({ t }) {
           </div>
           <div className="cta-links">
             <a href={CONTACT.linkedin} target="_blank" rel="noreferrer">{a.linkedin}</a>
-            <a href={CONTACT.cv} download>{a.cv}</a>
+            <a href={CONTACT.phoneHref}>{CONTACT.phone}</a>
             <a href="mailto:tiensuhorepec@gmail.com">Email: tiensuhorepec@gmail.com</a>
           </div>
         </div>

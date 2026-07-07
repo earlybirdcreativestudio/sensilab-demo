@@ -10,8 +10,9 @@ export const WEBHOOK_URL = ''
 export const CONTACT = {
   name: 'Tien Suhorepec',
   email: 'mailto:you@example.com',
-  linkedin: 'https://linkedin.com/in/your-handle',
-  cv: '/cv.pdf', // put cv.pdf in /public
+  linkedin: 'https://www.linkedin.com/in/tien-suhorepec-239420343?utm_source=share_via&utm_content=profile&utm_medium=member_ios',
+  phone: '+386 30 433 657',
+  phoneHref: 'tel:+38630433657',
   call: 'https://calendly.com/your-handle/15min',
 }
 
